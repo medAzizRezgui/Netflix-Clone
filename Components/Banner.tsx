@@ -3,7 +3,7 @@ import type { Movie } from "../typings";
 import React, { useEffect, useState } from "react";
 import { FaPlay } from "react-icons/fa";
 import { InformationCircleIcon } from "@heroicons/react/solid";
-export const baseUrl = "https://image.tmdb.org/t/p/original/";
+import { baseUrl } from "../consts/movies";
 
 type Props = {
   netflixOriginals: Movie[];
