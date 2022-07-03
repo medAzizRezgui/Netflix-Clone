@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import { FaPlay } from "react-icons/fa";
 import { InformationCircleIcon } from "@heroicons/react/solid";
 import { baseUrl } from "../consts/movies";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { modalState, movieState } from "../atoms/modalAtoms";
+import { useRecoilState } from "recoil";
+import { modalState, movieState } from "../atoms/modalAtom";
 
 type Props = {
   netflixOriginals: Movie[];

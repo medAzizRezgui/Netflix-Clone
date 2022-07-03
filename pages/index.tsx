@@ -6,7 +6,7 @@ import { Movie } from "../typings";
 import Row from "../Components/Row";
 import useAuth from "../hooks/useAuth";
 import { useRecoilValue } from "recoil";
-import { modalState } from "../atoms/modalAtoms";
+import { modalState } from "../atoms/modalAtom";
 import Modal from "../Components/Modal";
 
 export const getServerSideProps = async () => {
