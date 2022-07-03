@@ -8,7 +8,17 @@ import {
 import { useRouter } from "next/router";
 import { auth } from "../firebase";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
 
 interface IAuth {
   user: User | null;
@@ -18,12 +28,41 @@ interface IAuth {
   error: string | null;
   loading: boolean;
 }
+const AuthContext = createContext<IAuth>({
+  user: null,
+  signUp: async () => {},
+  signIn: async () => {},
+  logout: async () => {},
+  error: null,
+  loading: false,
+});
 
-export const useAuth = ({}) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [initialLoading, setInitialLoading] = useState(true);
+
   const router = useRouter();
 
+  useEffect(
+    () =>
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // Logged in...
+          setUser(user);
+          setLoading(false);
+        } else {
+          // Not logged in...
+          setUser(null);
+          setLoading(true);
+          router.push("/login");
+        }
+
+        setInitialLoading(false);
+      }),
+    [auth]
+  );
   // Sing Up Function
   const signUp = async (email: string, password: string) => {
     setLoading(true);
@@ -63,7 +102,25 @@ export const useAuth = ({}) => {
       .catch((error) => alert(error.message))
       .finally(() => setLoading(false));
   };
-  // return <AuthContext.Provider>{children}</AuthContext.Provider>;
+
+  const memoValue = useMemo(
+    () => ({
+      user,
+      signIn,
+      signUp,
+      logout,
+      loading,
+      error,
+    }),
+    [user, loading]
+  );
+  return (
+    <AuthContext.Provider value={memoValue}>
+      {!initialLoading && children}
+    </AuthContext.Provider>
+  );
 };
 
-export default useAuth;
+export default function useAuth() {
+  return useContext(AuthContext);
+}
